@@ -37,7 +37,7 @@ function WatchDir(dir, OnChange) {
   }
 
   ScanDir();
-  timers.setInterval(ScanDir, 1000);
+  timers.setInterval(ScanDir, 3000);
 }
 
 // Compiles all updated .vue components into static renderers.
@@ -53,10 +53,20 @@ function CompileVueComponents(path_to_vue_components, path_to_output_modules) {
       // RegisterMe(component-name, render, staticRenderFns);
       //+ scan for changes off timer & update; full scan in the beginning
       const component_name = path.basename(filename, '.vue');
-      const register_render_code = `RegisterRender("${component_name}",
-        ${JSON.stringify(renderers.render)}, 
-        ${JSON.stringify(renderers.staticRenderFns)}
-      );`;
+      let static_fns = '';
+      for (const static_fn of renderers.staticRenderFns) {
+        if (static_fns.length > 0) {
+          static_fns += ',';
+        }
+        static_fns += `function() { ${static_fn} }`; 
+      }
+
+      const register_render_code = `
+        RegisterRender(
+          "${component_name}",
+          function() { ${renderers.render} }, 
+          [ ${static_fns} ]
+        );`;
       fs.writeFileAsync(path_to_output_modules + '/' + component_name + '.js', register_render_code)
         .catch(e => { debugger; });
     }).catch(e => { debugger; });
@@ -66,4 +76,23 @@ function CompileVueComponents(path_to_vue_components, path_to_output_modules) {
 CompileVueComponents('../../ui/secure_vault_ui/src/components', './public/gens');
 
 // ------------------------------------------------------------
-// Serving and opening the browser for interactive live coding.
+// Serving. 
+var express = require('express');
+var app = express();
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Views are pug templates: resnpose.render(...).
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'pug');
+
+app.get('/', function(request, response) {
+  response.render('index', { title: 'First App!' });
+});
+
+app.listen(3000);
+
+// ------------------------------------------------------------
+// Open the browser for interactive live coding.
+const opn = require('opn');
+opn('http://127.0.0.1:3000/');

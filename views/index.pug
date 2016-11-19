@@ -1,0 +1,26 @@
+//- Pug supports layouts, see the sample express app.
+doctype html
+html
+  head
+    title= title
+    //- link(rel='stylesheet', href='/stylesheets/style.css')
+    //-https://code.jquery.com/
+    script(src='jquery-3.1.1.min.js')
+    //-https://cdnjs.com/libraries/lodash.js/
+    script(src='lodash.min.js')
+    //-https://cdnjs.com/libraries/vue
+    script(src='vue.js')
+    //- script(src='vue.js')
+
+    //- All statically rendered vue templates. 
+    script(src='renderer_register.js')
+    script(src='gens/edit.js')
+    script(src='gens/list.js')
+    script(src='gens/login.js')
+
+    //- The app. 
+    script(src='index.js')
+  body
+    h1= title
+    p Welcome to #{title}
+    #app
