@@ -1,0 +1,29 @@
+{
+  "name": "secure_vault",
+  "version": "0.0.1",
+  "description": "Secure Vault",
+  "main": "main.js",
+  "scripts": {
+    "dev": "node main.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WillAvudim/secure_vault.git"
+  },
+  "author": "Will Avudim",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/WillAvudim/secure_vault/issues"
+  },
+  "homepage": "https://github.com/WillAvudim/secure_vault",
+  "dependencies": {
+    "vue": "^2.0.1"
+  },
+  "devDependencies": {
+    "vue-template-compiler": "^2.0.5",
+    "express": "^4.14.0",
+    "pug": "^2.0.0-beta6",
+    "opn": "^4.0.2"
+  }
+}
