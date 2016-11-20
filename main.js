@@ -1,3 +1,4 @@
+'use strict';
 /*eslint no-console:0, quotes:0, no-debugger:0*/
 /*global
 require, __dirname
@@ -88,7 +89,9 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
 app.get('/', function(request, response) {
-  response.render('index', { title: 'First App!' });
+  // render with a parameter
+  // response.render('index', { title: 'First App!' });
+  response.render('index', {});
 });
 
 app.listen(3000);
@@ -97,3 +100,39 @@ app.listen(3000);
 // Open the browser for interactive live coding.
 const opn = require('opn');
 opn('http://127.0.0.1:3000/');
+
+// ------------------------------------------------------------
+// Compile for deployment.
+// 1. Concatenate *.js files into one.
+// 2. Remove console and debugger statements.
+// 3. Minifies the code.
+// 4. Puts all resulting files in a specific location.
+// 5. zips for chrome extension deployment and opens the Chromedev dashboard link.
+
+// uglify doesn't support ES-6 :-(
+
+var browserify = require('browserify');
+var gulp = require('gulp');
+var source = require('vinyl-source-stream');
+var buffer = require('vinyl-buffer');
+// var uglify = require('gulp-uglify');
+// var sourcemaps = require('gulp-sourcemaps');
+var gutil = require('gulp-util');
+gulp.task('javascript', function () {
+  // set up the browserify instance on a task basis
+  var b = browserify({
+    entries: 'index.js',
+    debug: false,
+    basedir: 'public'
+  });
+  return b.bundle()
+    .pipe(source('app.js'))
+    .pipe(buffer())
+    // .pipe(sourcemaps.init({loadMaps: true}))
+    // Add transformation tasks to the pipeline here.
+    // .pipe(uglify())  // uglify doesn't support ES-6
+    .on('error', gutil.log)
+    // .pipe(sourcemaps.write('./'))
+    .pipe(gulp.dest('./dist/js/'));
+});
+gulp.start('javascript');

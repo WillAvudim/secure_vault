@@ -18,13 +18,20 @@
   },
   "homepage": "https://github.com/WillAvudim/secure_vault",
   "dependencies": {
-    "vue": "^2.0.1"
+    "vue": "^2.0.8"
   },
   "devDependencies": {
     "bluebird": "^3.4.6",
     "express": "^4.14.0",
     "opn": "^4.0.2",
     "pug": "^2.0.0-beta6",
-    "vue-template-compiler": "^2.0.7"
+    "vue-template-compiler": "^2.0.8",
+    "gulp": "^3.9.1",
+    "browserify": "^13.1.1",
+    "vinyl-source-stream": "^1.1.0",
+    "vinyl-buffer": "^1.0.0",
+    "gulp-uglify": "^2.0.0",
+    "gulp-sourcemaps": "^2.2.0",
+    "gulp-util": "^3.0.7"
   }
 }

@@ -1,3 +1,7 @@
+.hidden {
+  display: none;
+}
+
 .modal {
   position: absolute;
   left: 0;
