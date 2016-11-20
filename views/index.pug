@@ -3,7 +3,7 @@ doctype html
 html
   head
     title= title
-    //- link(rel='stylesheet', href='/stylesheets/style.css')
+    link(rel='stylesheet', href='style.css')
     //-https://code.jquery.com/
     script(src='jquery-3.1.1.min.js')
     //-https://cdnjs.com/libraries/lodash.js/
@@ -11,6 +11,10 @@ html
     //-https://cdnjs.com/libraries/vue
     script(src='vue.js')
     //- script(src='vue.js')
+
+    script(src='lz-string.min.js')
+    script(src='forge.min.js')
+    script(src='encryption.js')
 
     //- All statically rendered vue templates. 
     script(src='renderer_register.js')
@@ -23,4 +27,5 @@ html
   body
     h1= title
     p Welcome to #{title}
-    #app
+    #screen-container
+    #dialog-container

@@ -1,4 +1,4 @@
-/*eslint no-console:0 quotes:0 no-debugger:0*/
+/*eslint no-console:0, quotes:0, no-debugger:0*/
 /*global
 require, __dirname
 */
@@ -68,6 +68,7 @@ function CompileVueComponents(path_to_vue_components, path_to_output_modules) {
           [ ${static_fns} ]
         );`;
       fs.writeFileAsync(path_to_output_modules + '/' + component_name + '.js', register_render_code)
+        .then(() => { console.info("Successfully compiled:", filename); })
         .catch(e => { debugger; });
     }).catch(e => { debugger; });
   });
