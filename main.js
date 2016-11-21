@@ -59,7 +59,7 @@ function CompileVueComponents(path_to_vue_components, path_to_output_modules) {
         if (static_fns.length > 0) {
           static_fns += ',';
         }
-        static_fns += `function() { ${static_fn} }`; 
+        static_fns += `function() { ${static_fn} }`;
       }
 
       const register_render_code = `
@@ -88,7 +88,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
-app.get('/', function(request, response) {
+app.get('/', function (request, response) {
   // render with a parameter
   // response.render('index', { title: 'First App!' });
   response.render('index', {});
@@ -102,37 +102,65 @@ const opn = require('opn');
 opn('http://127.0.0.1:3000/');
 
 // ------------------------------------------------------------
-// Compile for deployment.
-// 1. Concatenate *.js files into one.
-// 2. Remove console and debugger statements.
-// 3. Minifies the code.
-// 4. Puts all resulting files in a specific location.
-// 5. zips for chrome extension deployment and opens the Chromedev dashboard link.
-
-// uglify doesn't support ES-6 :-(
-
-var browserify = require('browserify');
-var gulp = require('gulp');
-var source = require('vinyl-source-stream');
-var buffer = require('vinyl-buffer');
-// var uglify = require('gulp-uglify');
-// var sourcemaps = require('gulp-sourcemaps');
-var gutil = require('gulp-util');
-gulp.task('javascript', function () {
-  // set up the browserify instance on a task basis
-  var b = browserify({
-    entries: 'index.js',
-    debug: false,
-    basedir: 'public'
-  });
-  return b.bundle()
-    .pipe(source('app.js'))
-    .pipe(buffer())
-    // .pipe(sourcemaps.init({loadMaps: true}))
-    // Add transformation tasks to the pipeline here.
-    // .pipe(uglify())  // uglify doesn't support ES-6
-    .on('error', gutil.log)
-    // .pipe(sourcemaps.write('./'))
-    .pipe(gulp.dest('./dist/js/'));
+// Compile as a Chrome extension.
+// Per instructions from
+// https://developer.chrome.com/webstore/get_started_simple#step5
+// at
+// https://chrome.google.com/webstore/developer/dashboard
+const fse = require('fs-extra');
+const child_process = require('child_process');
+// const child_process = bluebird.promisifyAll(require('child_process'));
+Promise.all([
+  RenderPugFile('views/index.pug', 'extension/index.html'),
+  CopyAllJsFiles('public/gens', 'extension/gens'),
+  CopyAllJsFiles('public', 'extension'),
+  CopyFile('public/style.css', 'extension/style.css')
+]).then(() => {
+  child_process.spawn('zip', ['-r', 'extension.zip', 'extension'])
+    .on('close', (code) => {
+      debugger;
+    });
 });
-gulp.start('javascript');
+
+function RenderPugFile(source_pug_file, dest_html_file) {
+  return new Promise((resolve, reject) => {
+    fs.readFileAsync(source_pug_file, 'utf8').then(file_content => {
+      const html = pug.render(file_content);
+      fs.writeFileAsync(dest_html_file, html)
+        .then(resolve)
+        .catch(reject);
+    });
+  });
+}
+
+function CopyAllJsFiles(from_dir, to_dir) {
+  return new Promise((resolve, reject) => {
+    fs.readdirAsync(from_dir).then(files => {
+      let all_copy_promises = [];
+      for (const file of files) {
+        if (!file.endsWith('.js')) {
+          continue;
+        }
+        const base_name = path.basename(file);
+        all_copy_promises.push(CopyFile(
+          from_dir + '/' + base_name,
+          to_dir + '/' + base_name));
+      }
+
+      Promise.all(all_copy_promises).then(resolve).catch(reject);
+    });
+  });
+}
+
+function CopyFile(from, to) {
+  return new Promise((resolve, reject) => {
+    fse.copy(from, to, function (err) {
+      if (err) {
+        reject(err);
+      } else {
+        resolve();
+      }
+    });
+    //fs.createReadStream(from).pipe(fs.createWriteStream(to));
+  });
+}

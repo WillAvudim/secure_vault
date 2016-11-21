@@ -1,0 +1,6 @@
+
+        RegisterRender(
+          "list",
+          function() { with(this){return _h('fieldset',{staticClass:"screen"},[_h('legend',["Ranked drag&drop service list"]),_h('textarea',{directives:[{name:"model",rawName:"v-model",value:(global_notes),expression:"global_notes"}],attrs:{"name":"textarea","rows":"10","cols":"50","placeholder":"encrypted notes"},domProps:{"value":_s(global_notes)},on:{"input":function($event){if($event.target.composing)return;global_notes=$event.target.value}}}),_h('div',[_l((services),function(service,service_index){return _h('div',[_h('span',[_s(service.name)]),_h('button',{on:{"click":function($event){EditService(service_index)}}},["Edit"]),_h('div',[_l((service.fields),function(field,field_index){return (!field.hide)?_h('button',{on:{"click":function($event){CopyValue(service_index, field_index)}}},[_s(field.name)]):_e()})]),_h('hr')])}),_h('button',{on:{"click":AddService}},["Add Service"])]),_h('div',{directives:[{name:"show",rawName:"v-show",value:(saved_indication),expression:"saved_indication"}]},["Saved successfully!"])])} }, 
+          [  ]
+        );
